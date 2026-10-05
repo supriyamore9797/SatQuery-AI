@@ -190,7 +190,7 @@ def calculate_ndvi(req: NDVIRequest):
                             "ndvi": 0.4,
                             "meaning": "Prototype vegetation interpretation threshold"
                         },
-                        "image_url": f"http://127.0.0.1:8000/api/v1/analysis/result/{result_id}/image.png",
+                        "image_url": f"/api/v1/analysis/result/{result_id}/image.png",
                         "bounds": [
                             [south, west],
                             [north, east]

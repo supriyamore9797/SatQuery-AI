@@ -125,8 +125,8 @@ def get_scene_metadata(scene_id: str, collection: str = "sentinel-2-l2a"):
                     "bbox": item.bbox,
                     "eo:cloud_cover": item.properties.get("eo:cloud_cover"),
                     "assets": {k: v.to_dict() for k, v in item.assets.items()},
-                    "preview_url": f"http://127.0.0.1:8000/api/v1/catalog/scene/{scene_id}/preview.png",
-                    "image_url": f"http://127.0.0.1:8000/api/v1/catalog/scene/{scene_id}/preview.png",
+                    "preview_url": f"/api/v1/catalog/scene/{scene_id}/preview.png",
+                    "image_url": f"/api/v1/catalog/scene/{scene_id}/preview.png",
                     "bounds": [
                         [south, west],
                         [north, east]

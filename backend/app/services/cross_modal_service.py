@@ -157,7 +157,7 @@ class CrossModalService:
                                  "evidence": "Optical NDWI < -0.1 + SAR VV > -5 dB"
                              },
                              "execution_time_ms": int((time.time() - start_time) * 1000),
-                             "image_url": f"http://127.0.0.1:8000/api/v1/cross-modal/result/{result_id}/image.png",
+                             "image_url": f"/api/v1/cross-modal/result/{result_id}/image.png",
                              "bounds": [[bottom, left], [top, right]],
                              "execution_trace": {
                                  "task": "cross_modal",
