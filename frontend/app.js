@@ -1,3 +1,5 @@
+const API_BASE = '/api/v1';
+
 // SatQuery AI – Simplified GIS Frontend
 
 // ==== Global State ====
@@ -443,7 +445,7 @@ function updateMapOverlay() {
   
   const renderMode = document.getElementById('render-mode').value;
   
-  let url = `http://127.0.0.1:8000/api/v1/datasets/${currentLayer.id}/preview`;
+  let url = `${API_BASE}/datasets/${currentLayer.id}/preview`;
   
 
   if (currentLayer.is_analysis) {
@@ -458,7 +460,7 @@ function updateMapOverlay() {
           const parts = currentLayer.preview_url.split('/');
           const resultId = parts[parts.length - 2];
           
-          url = `http://127.0.0.1:8000/api/v1/analysis/render?result_id=${resultId}&colormap=${colormap}&vmin=${fixedMin}&vmax=${fixedMax}`;
+          url = `${API_BASE}/analysis/render?result_id=${resultId}&colormap=${colormap}&vmin=${fixedMin}&vmax=${fixedMax}`;
       } else {
           url = currentLayer.preview_url;
       }
@@ -478,7 +480,7 @@ function updateMapOverlay() {
           if (band === 'True Color') {
               url = currentLayer.preview_url;
           } else {
-              url = `http://127.0.0.1:8000/api/v1/catalog/scene/${currentLayer.id}/band/${band}/preview${paramStr}`;
+              url = `${API_BASE}/catalog/scene/${currentLayer.id}/band/${band}/preview${paramStr}`;
           }
       } else {
           let paramStrLocal = "?";
@@ -703,7 +705,7 @@ async function handleMapClick(e) {
   }).addTo(map);
   
   try {
-      const resp = await fetch(`http://127.0.0.1:8000/api/v1/datasets/${currentLayer.id}/pixel?lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
+      const resp = await fetch(`${API_BASE}/datasets/${currentLayer.id}/pixel?lat=${e.latlng.lat}&lon=${e.latlng.lng}`);
       if (!resp.ok) throw new Error('Failed to fetch pixel');
       const data = await resp.json();
       
@@ -798,7 +800,7 @@ function setupEventListeners() {
     }
     
     try {
-      const resp = await fetch('http://127.0.0.1:8000/api/v1/images/upload', {
+      const resp = await fetch(API_BASE + '/images/upload', {
         method: 'POST',
         body: form
       });
@@ -974,7 +976,7 @@ function setupEventListeners() {
             }
         }
         
-        const res = await fetch('http://127.0.0.1:8000/api/v1/export/pdf', {
+        const res = await fetch(API_BASE + '/export/pdf', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(payload)
@@ -1167,7 +1169,7 @@ function setupEventListeners() {
                 
                 // 1. Ask the backend to route the query
                 document.getElementById('header-status').textContent = 'ROUTING TASK...';
-                const routeRes = await loggedFetch('http://127.0.0.1:8000/api/v1/query/route', {
+                const routeRes = await loggedFetch(API_BASE + '/query/route', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ question: q })
@@ -1189,7 +1191,7 @@ function setupEventListeners() {
                     if (!aoiData) throw new Error("Please select an Area of Interest before running Change-VQA.");
                     
                     document.getElementById('header-status').textContent = 'RUNNING CHANGE VQA...';
-                    const res = await loggedFetch('http://127.0.0.1:8000/api/v1/change/vqa', {
+                    const res = await loggedFetch(API_BASE + '/change/vqa', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ image_before_id: beforeId, image_after_id: afterId, question: q, aoi: aoiData })
@@ -1310,7 +1312,7 @@ Status: ${exec.status || 'success'}
                     
                     document.getElementById('header-status').textContent = 'RUNNING NDVI ANALYSIS...';
                     const source_type = currentLayer.is_stac ? 'stac' : 'local';
-                    const res = await loggedFetch('http://127.0.0.1:8000/api/v1/analysis/ndvi', {
+                    const res = await loggedFetch(API_BASE + '/analysis/ndvi', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ scene_id: currentLayer.id, source_type: source_type, aoi: aoiData })
@@ -1392,7 +1394,7 @@ Status: success
                     }
                     
                     document.getElementById('header-status').textContent = `RUNNING ${task.toUpperCase()}...`;
-                    const res = await loggedFetch('http://127.0.0.1:8000/api/v1/vqa/query', {
+                    const res = await loggedFetch(API_BASE + '/vqa/query', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -1798,7 +1800,7 @@ ${errMsg}`;
               
               console.log("SEARCH REQUEST PAYLOAD", req);
 
-              const resp = await fetch('http://127.0.0.1:8000/api/v1/catalog/search', {
+              const resp = await fetch(API_BASE + '/catalog/search', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify(req)
@@ -1891,7 +1893,7 @@ ${errMsg}`;
 async function loadStacScene(scene) {
     try {
         document.getElementById('header-status').textContent = `Loading STAC scene data...`;
-        const res = await fetch(`http://127.0.0.1:8000/api/v1/catalog/scene/${scene.scene_id}`);
+        const res = await fetch(`${API_BASE}/catalog/scene/${scene.scene_id}`);
         if (!res.ok) {
             throw new Error(`HTTP Error: ${res.status}`);
         }
@@ -2026,7 +2028,7 @@ if (btnCalcNdvi) {
         }
         
         try {
-            const res = await fetch('http://127.0.0.1:8000/api/v1/analysis/ndvi', {
+            const res = await fetch(API_BASE + '/analysis/ndvi', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ scene_id: layerId, source_type: source_type, aoi: aoiData })
@@ -2133,8 +2135,8 @@ function activateKanchaCaseStudy() {
     };
 
     Promise.all([
-        loggedFetch("http://127.0.0.1:8000/api/v1/catalog/scene/" + caseStudyBeforeScene).then(r => r.json()),
-        loggedFetch("http://127.0.0.1:8000/api/v1/catalog/scene/" + caseStudyAfterScene).then(r => r.json())
+        loggedFetch(API_BASE + "/catalog/scene/" + caseStudyBeforeScene).then(r => r.json()),
+        loggedFetch(API_BASE + "/catalog/scene/" + caseStudyAfterScene).then(r => r.json())
     ]).then(([beforeData, afterData]) => {
         caseStudyBeforeMeta = beforeData;
         caseStudyAfterMeta = afterData;

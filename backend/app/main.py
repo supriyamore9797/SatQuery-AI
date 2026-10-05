@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.upload import router as upload_router
@@ -51,6 +53,27 @@ app.include_router(change_router)
 app.include_router(cross_modal_router)
 app.include_router(registry_router)
 app.include_router(benchmark_router)
+# Serve the SatQuery AI frontend
+FRONTEND_DIR = Path(__file__).resolve().parents[2] / "frontend"
+
+if FRONTEND_DIR.exists():
+    app.mount(
+        "/assets",
+        StaticFiles(directory=FRONTEND_DIR / "assets"),
+        name="assets"
+    )
+
+    @app.get("/app")
+    def serve_frontend():
+        return FileResponse(FRONTEND_DIR / "index.html")
+
+    @app.get("/styles.css")
+    def serve_css():
+        return FileResponse(FRONTEND_DIR / "styles.css")
+
+    @app.get("/app.js")
+    def serve_js():
+        return FileResponse(FRONTEND_DIR / "app.js")
 
 
 @app.get("/")
